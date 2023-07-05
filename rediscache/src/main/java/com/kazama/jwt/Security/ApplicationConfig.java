@@ -2,6 +2,7 @@ package com.kazama.jwt.Security;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,21 +22,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-
-    private  final UserRepository userRepository;
+    @Autowired
+    private final UserRepository userRepository;
 
     @Bean
-    protected UserDetailsService userDetailsService(){
-        return username -> userRepository.findById(UUID.fromString(username)).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+    protected UserDetailsService userDetailsService() {
+        return username -> userRepository.findById(UUID.fromString(username))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    @Bean 
-    public PasswordEncoder passwordEncoder(){
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(userDetailsService());
@@ -43,7 +45,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 

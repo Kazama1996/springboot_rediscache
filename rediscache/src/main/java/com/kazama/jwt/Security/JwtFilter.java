@@ -2,6 +2,7 @@ package com.kazama.jwt.Security;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,16 +17,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
+    @Autowired
     private final JwtService jwtService;
 
-  
-
+    @Autowired
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -35,30 +37,30 @@ public class JwtFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         String cookieName = "jwt";
         String jwtToken = null;
-        String userId ;
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals(cookieName)){
-                jwtToken=cookie.getValue();
+        String userId;
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(cookieName)) {
+                jwtToken = cookie.getValue();
                 break;
             }
         }
 
-        if(jwtToken==null){
+        if (jwtToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
         userId = jwtService.extractUserId(jwtToken);
-        if(userId!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-            User userDetails = (User)this.userDetailsService.loadUserByUsername(userId);
-            if(jwtService.isTokenValid(jwtToken, userDetails)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails.getUserId(), null, userDetails.getAuthorities());
+        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            User userDetails = (User) this.userDetailsService.loadUserByUsername(userId);
+            if (jwtService.isTokenValid(jwtToken, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails.getUserId(), null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        
         filterChain.doFilter(request, response);
     }
-    
+
 }
