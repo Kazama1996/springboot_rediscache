@@ -10,23 +10,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kazama.jwt.dto.request.PostRequest;
-import com.kazama.jwt.service.PostService;
+import com.kazama.jwt.dto.request.ProductRequest;
+import com.kazama.jwt.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
-public class PostController {
+public class ProductController {
 
-    @Autowired
-    private final PostService postService;
+    private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody PostRequest reqBody) {
-        UUID reqUserId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<?> createProduct(@RequestBody ProductRequest reqBody) {
+        // UUID reqUserId = (UUID)
+        // SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return postService.createPost(reqUserId, reqBody);
+        return productService.createProduct(reqBody);
     }
+
 }

@@ -3,14 +3,11 @@ package com.kazama.jwt.model;
 import java.time.Instant;
 import java.util.UUID;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -20,23 +17,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "posts")
-@Data
-@Builder
+@Table(name = "product")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post {
+@Builder
+@Data
+public class Product {
 
     @Id
-    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID postId;
-    @ManyToOne
-    @JoinColumn(name = "user_id_fk")
-    private User user;
-    @Column(name = "content")
-    private String content;
+    @Column(name = "product_id")
+    private UUID productId;
+    @Column(name = "product_name")
+    private String productName;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "product_price")
+    private Integer price;
+    @Column(name = "stock")
+    private Integer stock;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Instant createdAt;
+
 }
