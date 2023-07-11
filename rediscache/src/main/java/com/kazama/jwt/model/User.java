@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.kazama.jwt.Security.Role;
+import com.kazama.jwt.security.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,11 +21,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
@@ -39,27 +37,26 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
-    private  UUID userId;
-    
+    private UUID userId;
+
     @Column(name = "email")
-    private  String email;
-    
+    private String email;
+
     @Column(name = "password")
-    private  String password;
-    
+    private String password;
+
     @Column(name = "profile_name")
-    private  String profileName;
-    
+    private String profileName;
+
     @Column(name = "full_name")
-    private  String fullName;
+    private String fullName;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Instant updateAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name= "role")
-    private  Role role;
-
+    @Column(name = "role")
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -95,5 +92,5 @@ public class User implements UserDetails {
         // TODO Auto-generated method stub
         return true;
     }
-    
+
 }

@@ -1,4 +1,4 @@
-package com.kazama.jwt.Security;
+package com.kazama.jwt.security;
 
 import java.util.UUID;
 
