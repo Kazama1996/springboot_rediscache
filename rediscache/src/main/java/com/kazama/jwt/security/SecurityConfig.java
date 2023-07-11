@@ -1,5 +1,4 @@
-package com.kazama.jwt.Security;
-
+package com.kazama.jwt.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 import lombok.RequiredArgsConstructor;
-
 
 @Configuration
 @EnableWebSecurity
@@ -24,16 +21,14 @@ public class SecurityConfig {
     private final AuthenticationProvider authProvider;
 
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf->csrf.disable());
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
+        http.csrf(csrf -> csrf.disable());
+        http.authorizeHttpRequests(
+                auth -> auth.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
         http.authenticationProvider(authProvider);
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-
-
-    
 }
