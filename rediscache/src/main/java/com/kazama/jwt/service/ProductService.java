@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -82,22 +83,43 @@ public class ProductService {
         }
         boolean lockAcqired = valueOperations.setIfAbsent("cacheLock", true, 5,
                 TimeUnit.SECONDS);
-        if (lockAcqired) {
-            try {
-                jsonString = (String) redisTemplate.opsForValue().get("ProductList");
+
+        try {
+            if (lockAcqired) {
+                this.jsonString = (String) valueOperations.get("ProductList");
                 if (jsonString != null) {
                     this.productList = gson.fromJson(jsonString, productListType);
                     return ResponseEntity.ok().body(this.productList);
                 }
+
                 this.productList = productRepository.findAll();
                 this.updatedJsonStr = gson.toJson(this.productList);
-                redisTemplate.opsForValue().set("ProductList", this.updatedJsonStr);
-                return new ResponseEntity<>(productList, HttpStatus.OK);
-            } finally {
-                redisTemplate.delete("cacheLock");
+                valueOperations.set("ProductList", this.updatedJsonStr);
+                return ResponseEntity.ok().body(this.productList);
+            } else {
+                return ResponseEntity.status(HttpStatusCode.valueOf(503)).body("Service is not ready please try again");
+            
             }
+        } finally {
+            redisTemplate.delete("cacheLock");
         }
-        return new ResponseEntity<>(productList, HttpStatus.OK);
+
+        // if (lockAcqired) {
+        // try {
+        // jsonString = (String) redisTemplate.opsForValue().get("ProductList");
+        // if (jsonString != null) {
+        // this.productList = gson.fromJson(jsonString, productListType);
+        // return ResponseEntity.ok().body(this.productList);
+        // }
+        // this.productList = productRepository.findAll();
+        // this.updatedJsonStr = gson.toJson(this.productList);
+        // redisTemplate.opsForValue().set("ProductList", this.updatedJsonStr);
+        // return new ResponseEntity<>(productList, HttpStatus.OK);
+        // } finally {
+        // redisTemplate.delete("cacheLock");
+        // }
+        // }
+        // return new ResponseEntity<>(productList, HttpStatus.OK);
 
     }
 
